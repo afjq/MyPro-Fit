@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.DepMapper">
+
+	<!-- // 根据组织Id查找部门 public List<Dep> findAll(Integer orgId); -->
+	<select id="findAll" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select * from dep
+		where dep.dep_org = #{orgId}
+	</select>
+
+	<!-- // 通过部门id删除部门，不需要提供组织Id因为所有部门都在同一张表里，具有自己的唯一标识dep_id public void delDepById(Integer 
+		depId); -->
+	<delete id="delDepById" parameterType="java.lang.Integer">
+		delete from dep
+		where
+		dep_id = #{depId}
+	</delete>
+
+	<!-- // 根据部门Id修改一个部门名 public void updateDepById(@Param("depId") Integer 
+		depId, @Param("depName") String depName); -->
+	<update id="updateDepById">
+		update dep
+		set
+		dep_name =
+		#{depName}
+		where dep_id = #{depId}
+	</update>
+
+	<!-- // 需要确定组织Id，给dep_org赋值 public void insertDep(@Param("depName") String depName, @Param("orgId") Integer orgId); -->
+	<insert id="insertDep">
+		insert into
+		dep(dep_name,dep_org)
+		values (#{depName},#{orgId})
+	</insert>
+
+	<!-- // 根据部门Id查找部门 public Dep findById(Integer depId); -->
+	<select id="findById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select * from dep
+		where dep_id = #{depId}
+	</select>
+
+
+	<!-- 部门基本结果集 -->
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Dep">
+		<id column="dep_id" jdbcType="INTEGER" property="depId" />
+		<result column="dep_name" jdbcType="VARCHAR" property="depName" />
+		<!-- 对一，部门所属组织类型，关联到组织类 -->
+		<association property="depOrg"
+			javaType="com.lzy.domain.Org"
+			resultMap="com.lzy.mapper.OrgMapper.BaseResultMap" />
+	</resultMap>
+	<!-- 此部门的成员 -->
+	<!-- extends继承部门的基本类型，部门类型结果定义补充：List<User> -->
+	<resultMap id="resultDepType" type="com.lzy.domain.Dep"
+		extends="BaseResultMap">
+		<collection property="depUser" javaType="java.util.List"
+			ofType="com.lzy.domain.User"
+			resultMap="com.lzy.mapper.UserMapper.BaseResultMap">
+		</collection>
+		<collection property="depAdmin" javaType="java.util.List"
+			ofType="com.lzy.domain.Admin"
+			resultMap="com.lzy.mapper.AdminMapper.BaseResultMap">
+		</collection>
+	</resultMap>
+</mapper>

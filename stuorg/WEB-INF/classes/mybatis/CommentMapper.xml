@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.lzy.domain.Comment">
+    <id column="comment_id" jdbcType="INTEGER" property="commentId" />
+    <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime" />
+    <result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+    	<!-- 对一 -->
+		<association property="commentPerson"
+			javaType="com.lzy.domain.User"
+			resultMap="com.lzy.mapper.UserMapper.BaseResultMap" />
+		<association property="commentActive"
+			javaType="com.lzy.domain.Active"
+			resultMap="com.lzy.mapper.ActiveMapper.BaseResultMap" />
+			
+  </resultMap>
+</mapper>

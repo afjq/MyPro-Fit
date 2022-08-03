@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.PlaceMapper">
+
+	<!-- // 通过场地类型ID查找场地 List<Place> findByPtypeId(Integer ptypeId); -->
+	<select id="findByPtypeId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select * from place
+		where place_type = #{ptypeId}
+	</select>
+
+
+	<!-- // 通过场地ID查找 Place findById(Integer placeId); -->
+	<select id="findById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select * from place
+		where place_id = #{placeId}
+	</select>
+
+	<!-- // 通过场地ID修改场地 int updateById(Integer placeId); -->
+	<update id="updateById" parameterType="java.lang.Integer">
+		update place
+		set
+		place_name =#{placeName},
+		place_capacity=#{placeCapacity},
+		place_used=#{placeUsed}
+		where place_id = #{placeId}
+	</update>
+
+	<!-- // 通过场地ID删除场地 int delById(Integer placeId); -->
+	<delete id="delById" parameterType="java.lang.Integer">
+		delete from place
+		where
+		place_id = #{placeId}
+	</delete>
+
+	<!-- // 新增场地 int insertPlace(@Param("place") Place place); -->
+	<insert id="insertPlace" parameterType="com.lzy.domain.Place">
+		insert into place (
+		place_name,
+		place_capacity,
+		place_used,
+		place_type)
+		values (
+		#{place.placeName},
+		#{place.placeCapacity},
+		null,
+		#{place.placeType.ptypeId})
+	</insert>
+
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Place">
+		<id column="place_id" jdbcType="INTEGER" property="placeId" />
+		<result column="place_name" jdbcType="VARCHAR"
+			property="placeName" />
+		<result column="place_capacity" jdbcType="INTEGER"
+			property="placeCapacity" />
+		<result column="place_used" jdbcType="TINYINT"
+			property="placeUsed" />
+		<!-- 对一 ，对应一个类型 -->
+		<association property="placeType"
+			javaType="com.lzy.domain.Ptype"
+			resultMap="com.lzy.mapper.PtypeMapper.BaseResultMap" />
+	</resultMap>
+</mapper>

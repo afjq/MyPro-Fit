@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.AdminMapper">
+	
+	<!-- //	根据ID查找
+	Admin findById(Integer adminId); -->
+<!-- 	<select id="findByAdminNum" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from admin
+		where admin_num = #{adminNum}
+	</select> -->
+	
+	<!-- // 管理员登录，根据adminNum查找管理员 Admin findByadminNUm(@Param("adminNum") String 
+		adminNum); -->
+	<select id="findByAdminNum" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+			select * from admin
+			left join org
+			on org.org_id = admin.admin_org
+			left join dep 
+			on dep.dep_id=admin.admin_dep
+			where admin_num = #{adminNum}
+	</select>
+
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Admin">
+		<id column="admin_id" jdbcType="INTEGER" property="adminId" />
+		<result column="admin_num" jdbcType="VARCHAR"
+			property="adminNum" />
+		<result column="admin_name" jdbcType="VARCHAR"
+			property="adminName" />
+		<result column="admin_psw" jdbcType="VARCHAR"
+			property="adminPsw" />
+		<result column="admin_phone" jdbcType="VARCHAR"
+			property="adminPhone" />
+		<result column="admin_QQ" jdbcType="VARCHAR" property="adminQq" />
+		<result column="admin_permission" jdbcType="VARCHAR"
+			property="adminPermission" />
+		<!-- 对一，用户所属组织类型，关联到组织类 -->
+		<association property="adminOrg"
+			javaType="com.lzy.domain.Org"
+			resultMap="com.lzy.mapper.OrgMapper.BaseResultMap" />
+		<!-- 对一，用户所属部门类型，关联到部门类 -->
+		<association property="adminDep"
+			javaType="com.lzy.domain.Dep"
+			resultMap="com.lzy.mapper.DepMapper.BaseResultMap" />
+		<!-- 对一，用户所属班级类型，关联到班级类 -->
+		<association property="adminClass"
+			javaType="com.lzy.domain.Clas"
+			resultMap="com.lzy.mapper.ClasMapper.BaseResultMap" />
+	</resultMap>
+</mapper>

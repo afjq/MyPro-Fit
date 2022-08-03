@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.ClasMapper">
+
+<!-- //	单纯查找所有班级
+	List<Class> findAll(); -->
+	<select id="findAll" resultMap="BaseResultMap">
+		select * from clas
+	</select>
+	
+<!-- 	//	根据Id找一个班级
+	Clas findById(Integer classId); -->
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select * from clas
+		where class_id = #{classId}
+	</select>
+
+<!-- 结果集 -->
+  <resultMap id="BaseResultMap" type="com.lzy.domain.Clas">
+    <id column="class_id" jdbcType="INTEGER" property="classId" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+  </resultMap>
+  <!-- extends继承部门的基本类型，部门类型结果定义补充：List<User> -->
+	<resultMap id="resultClassType" type="com.lzy.domain.Clas"
+		extends="BaseResultMap">
+		<collection property="userOfClass" javaType="java.util.List"
+			ofType="com.lzy.domain.User"
+			resultMap="com.lzy.mapper.UserMapper.BaseResultMap">
+		</collection>
+		<collection property="adminOfClass" javaType="java.util.List"
+			ofType="com.lzy.domain.Admin"
+			resultMap="com.lzy.mapper.AdminMapper.BaseResultMap">
+		</collection>
+	</resultMap>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.ActiveMapper">
+
+<!-- 查找所有组织, -->
+	<select id="findAll" resultMap="BaseResultMap">
+		select * from active
+		left join user
+		on user.user_id = active.active_person
+	</select>
+
+
+
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Active">
+		<id column="active_id" jdbcType="INTEGER" property="activeId" />
+		<result column="active_content" jdbcType="VARCHAR"
+			property="activeContent" />
+		<result column="active_picture" jdbcType="VARCHAR"
+			property="activePicture" />
+		<result column="active_random" jdbcType="VARCHAR"
+			property="activeRandom" />
+		<result column="active_time" javaType="java.util.Date"
+			property="activeTime" />
+		<!-- 对一 -->
+		<association property="activePerson"
+			javaType="com.lzy.domain.User"
+			resultMap="com.lzy.mapper.UserMapper.BaseResultMap" />
+	</resultMap>
+	
+	
+</mapper>

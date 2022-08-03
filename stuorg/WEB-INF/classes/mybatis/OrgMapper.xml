@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.OrgMapper">
+	<!-- 查找所有组织, -->
+	<select id="findAll" resultMap="resultOrgType">
+		select * from org
+		left
+		join dep
+		on dep.dep_org = org.org_id
+	</select>
+	<!-- 通过组织Id查找一个组织 -->
+	<select id="findById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select * from org
+		where org_id = #{orgId}
+	</select>
+	<!-- 插入一个组织 -->
+	<insert id="insertOrg" parameterType="com.lzy.domain.Org">
+		insert into org
+		(org_name) values (#{orgName})
+	</insert>
+	<!-- 通过id删除组织 -->
+	<delete id="delOrgById" parameterType="java.lang.Integer">
+		delete from org
+		where org_id = #{orgId}
+	</delete>
+	<!-- //	通过id修改组织信息
+	//	多个参数@Param注解 -->
+	<update id="updateOrg" parameterType="com.lzy.domain.Org">
+		update org
+		set
+		org_name = #{orgName}
+		where org_id = #{orgId}
+	</update>
+
+
+	<!-- 组织基本结果集 -->
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Org">
+		<id column="org_id" jdbcType="INTEGER" property="orgId" />
+		<result column="org_name" jdbcType="VARCHAR" property="orgName" />
+	</resultMap>
+
+	<!-- extends继承组织的基本类型，部门类型结果定义补充：List<Department> -->
+	<resultMap id="resultOrgType" type="com.lzy.domain.Org"
+		extends="BaseResultMap">
+		<!-- 取到List类型 List类型里装Department类型：ofType ，resultMap连接到DepMapper.xml -->
+		<collection property="orgDep" javaType="java.util.List"
+			ofType="com.lzy.domain.Dep"
+			resultMap="com.lzy.mapper.DepMapper.BaseResultMap">
+		</collection>
+	</resultMap>
+</mapper>

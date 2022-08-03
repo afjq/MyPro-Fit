@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.FileMapper">
+
+	<!-- //	根据通知ID查找文件
+	List<Filee> findByNoticeId(Integer noticeId); -->
+	<select id="findByNoticeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from file 
+		where file_notice = #{noticeId}
+	</select>
+	
+	<!-- 查找所有文件 -->
+	<select id="findAll" resultMap="BaseResultMap">
+		select * from file
+		left join admin
+		on admin.admin_id=file.file_uploader
+		left join dep
+		on dep.dep_id=file.file_dep
+		left join org
+		on org.org_id=dep.dep_org
+	</select>
+	
+	<!-- 通过文件原始名称查找文件-->
+	<!-- //	通过文件原始名称查找文件
+	public Filee findById(Integer fileId); -->
+	<select id="findById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select * from file
+		left join admin
+		on admin.admin_id=file.file_uploader
+		left join dep
+		on dep.dep_id=file.file_dep
+		where file_id = #{fileId}
+	</select>
+	
+	<!-- 通过组织Id插入文件，文件上传时 -->
+	<insert id="save" parameterType="com.lzy.domain.Filee">
+		insert into file (
+		file_name,
+		file_uploader,
+		file_dep,
+		file_date,
+		file_random,
+		file_notice)
+		values (
+		#{file.fileName},
+		#{file.fileUploader.adminId},
+		#{file.fileDep.depId},
+		#{file.fileDate},
+		#{file.fileRandom},
+		#{file.fileNotice.noticeId}
+		)
+	</insert>
+	
+	<!-- //	删除文件
+	int delFile(Integer fileId); -->
+	<delete id="delFile" parameterType="java.lang.Integer">
+		delete from file
+		where file_id
+		= #{fileId}
+	</delete>
+
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Filee">
+		<id column="file_id" jdbcType="INTEGER" property="fileId" />
+		<result column="file_name" jdbcType="VARCHAR"
+			property="fileName" />
+		<result column="file_date" javaType="java.util.Date"
+			property="fileDate" />
+		<result column="file_random" javaType="java.lang.String"
+			property="fileRandom" />
+			<!-- 对一，文件上传者 -->
+		<association property="fileUploader"
+			javaType="com.lzy.domain.Admin"
+			resultMap="com.lzy.mapper.AdminMapper.BaseResultMap" />
+		<!-- 对一，文件所属部门类型，关联到部门类 -->
+		<association property="fileDep"
+			javaType="com.lzy.domain.Dep"
+			resultMap="com.lzy.mapper.DepMapper.BaseResultMap" />
+		<!-- 对一，文件所属通知 -->
+		<association property="fileNotice"
+			javaType="com.lzy.domain.Notice"
+			resultMap="com.lzy.mapper.NoticeMapper.BaseResultMap" />
+	</resultMap>
+</mapper>

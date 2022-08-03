@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.UserMapper">
+
+	<!-- 根据User的Num学号查找User的pwd -->
+	<select id="findByNum" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from user
+		left join clas
+		on clas.class_id=user.user_class
+		left join org 
+		on org.org_id=user.user_org
+		left join dep
+		on dep.dep_id=user.user_dep
+		where user_num = #{userNum}
+	</select>
+
+	<!-- 根据部门Id查找User -->
+	<select id="findByDepId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select * from user
+		left join clas
+		on clas.class_id=user.user_class
+		where user.user_dep = #{depId}
+	</select>
+
+	<!-- 根据用户Id查找User -->
+	<select id="findById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select * from user
+		left join clas
+		on clas.class_id=user.user_class
+		left join org
+		on org.org_id=user.user_org
+		left join dep
+		on dep.dep_id=user.user_dep
+		where user_id = #{userId}
+	</select>
+
+	<!-- 根据用户Id删除一个用户 -->
+	<delete id="delUser" parameterType="java.lang.Integer">
+		delete from user
+		where user_id
+		= #{userId}
+	</delete>
+
+	<!-- 插入一个用户 -->
+	<insert id="insertUser" parameterType="com.lzy.domain.User">
+		insert into user (
+		user_num,
+		user_name,
+		user_psw,
+		user_org,
+		user_dep,
+		user_class,
+		user_phone,
+		user_QQ)values(
+		#{user.userNum},
+		#{user.userName},
+		#{user.userPsw},
+		#{user.userOrg.orgId},
+		#{user.userDep.depId},
+		#{user.userClass.classId},
+		#{user.userPhone},
+		#{user.userQq})
+	</insert>
+
+	<!-- 通过用户Id更新用户信息 -->
+	<update id="updateById" parameterType="com.lzy.domain.User">
+		UPDATE user
+		set
+		user_num =#{user.userNum},
+		user_name = #{user.userName},
+		user_psw =#{user.userPsw},
+		user_org = #{user.userOrg.orgId},
+		user_dep =#{user.userDep.depId},
+		user_class = #{user.userClass.classId},
+		user_phone =#{user.userPhone},
+		user_QQ = #{user.userQq}
+		
+		where user_id
+		=#{user.userId}
+	</update>
+
+	<!-- 结果集 -->
+	<resultMap id="BaseResultMap" type="com.lzy.domain.User">
+		<id column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="user_num" jdbcType="VARCHAR" property="userNum" />
+		<result column="user_name" jdbcType="VARCHAR"
+			property="userName" />
+		<result column="user_psw" jdbcType="VARCHAR" property="userPsw" />
+		<result column="user_phone" jdbcType="VARCHAR"
+			property="userPhone" />
+		<result column="user_QQ" jdbcType="VARCHAR" property="userQq" />
+		<result column="user_permission" jdbcType="VARCHAR"
+			property="userPermission" />
+		<!-- 对一，用户所属组织类型，关联到组织类 -->
+		<association property="userOrg"
+			javaType="com.lzy.domain.Org"
+			resultMap="com.lzy.mapper.OrgMapper.BaseResultMap" />
+		<!-- 对一，用户所属部门类型，关联到部门类 -->
+		<association property="userDep"
+			javaType="com.lzy.domain.Dep"
+			resultMap="com.lzy.mapper.DepMapper.BaseResultMap" />
+		<!-- 对一，用户所属班级类型，关联到班级类 -->
+		<association property="userClass"
+			javaType="com.lzy.domain.Clas"
+			resultMap="com.lzy.mapper.ClasMapper.BaseResultMap" />
+	</resultMap>
+
+
+</mapper>

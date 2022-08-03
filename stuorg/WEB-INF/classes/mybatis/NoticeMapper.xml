@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.NoticeMapper">
+	
+	<!-- //	查找最新的noticeId
+	Notice findMaxId(); -->
+	<select id="findMaxId" resultMap="BaseResultMap">
+		select * from notice
+		 where notice_id = (select MAX(notice_id) from notice)
+	</select>
+	
+	<!-- 查找所有 -->
+	<select id="findAll" resultMap="resultNoticeType">
+		select * from notice
+		left join admin
+		on admin.admin_id=notice.notice_person
+		left join dep
+		on dep.dep_id = notice.notice_dep
+		left join org 
+		on org.org_id=dep.dep_org
+		left join file
+		on file.file_notice=notice.notice_id
+	</select>
+	
+	<!-- //	通过noticeId删除Notice
+	int delById(Integer noticeId); -->
+	<delete id="delById" parameterType="java.lang.Integer">
+		delete from notice
+		where notice_id
+		= #{noticeId}
+	</delete>
+	
+	<!-- //	发布notice：插入
+	int insertNotice(@Param("notice") Notice notice); -->
+	<insert id="insertNotice" parameterType="com.lzy.domain.Notice">
+		insert into notice (
+		notice_title,
+		notice_content,
+		notice_time,
+		notice_person,
+		notice_dep)
+		values (
+		#{notice.noticeTitle},
+		#{notice.noticeContent},
+		#{notice.noticeTime},
+		#{notice.noticePerson.adminId},
+		#{notice.noticeDep.depId})
+	</insert>
+	
+
+	<resultMap id="BaseResultMap" type="com.lzy.domain.Notice">
+		<id column="notice_id" jdbcType="INTEGER" property="noticeId" />
+		<result column="notice_title" jdbcType="VARCHAR"
+			property="noticeTitle" />
+		<result column="notice_content" jdbcType="VARCHAR"
+			property="noticeContent" />
+		<result column="notice_time" javaType="java.util.Date"
+			property="noticeTime" />
+		<!-- 对一，公告发布者 -->
+		<association property="noticePerson"
+			javaType="com.lzy.domain.Admin"
+			resultMap="com.lzy.mapper.AdminMapper.BaseResultMap" />
+			<!-- 对一，文件所属部门类型，关联到部门类 -->
+		<association property="noticeDep"
+			javaType="com.lzy.domain.Dep"
+			resultMap="com.lzy.mapper.DepMapper.BaseResultMap" />
+	</resultMap>
+		<!-- extends继承组织的基本类型，部门类型结果定义补充：List<Department> -->
+	<resultMap id="resultNoticeType" type="com.lzy.domain.Notice"
+		extends="BaseResultMap">
+		<!-- 取到List类型 List类型里装Department类型：ofType ，resultMap连接到DepMapper.xml -->
+		<collection property="noticeFile" javaType="java.util.List"
+			ofType="com.lzy.domain.Filee"
+			resultMap="com.lzy.mapper.FileMapper.BaseResultMap">
+		</collection>
+	</resultMap>
+</mapper>

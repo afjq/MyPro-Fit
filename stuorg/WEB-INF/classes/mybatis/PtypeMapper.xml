@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lzy.mapper.PtypeMapper">
+	<!-- 	Ptype findById(Integer ptypeId); -->
+	<select id="findById" resultMap="BaseResultMap">
+		select * from ptype
+		where ptype_id=#{ptypeId}
+	</select>
+	
+	<!-- List<Ptype> findAll(); -->
+	<select id="findAll" resultMap="resultPtypeType">
+		select * from ptype
+		left join place
+		on place.place_type = ptype.ptype_id
+	</select>
+
+  <resultMap id="BaseResultMap" type="com.lzy.domain.Ptype">
+    <id column="ptype_id" jdbcType="INTEGER" property="ptypeId" />
+    <result column="ptype_name" jdbcType="VARCHAR" property="ptypeName" />
+  </resultMap>
+  <!-- 此场地类型的场地 -->
+	<!-- extends继承部门的基本类型，部门类型结果定义补充：List<User> -->
+	<resultMap id="resultPtypeType" type="com.lzy.domain.Ptype"
+		extends="BaseResultMap">
+		<collection property="ptypePlace" javaType="java.util.List"
+			ofType="com.lzy.domain.Place"
+			resultMap="com.lzy.mapper.PlaceMapper.BaseResultMap">
+		</collection>
+	</resultMap>
+</mapper>
